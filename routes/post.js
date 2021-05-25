@@ -8,7 +8,7 @@ router.post("/add/Post", (req, res) => {
       validate = true
     }
   }
-  if (validate == true){
+  if (validate == true || req.body.tags.length === 0){
     const newPost = new Post({
       title: req.body.title,
       content: req.body.content,
@@ -41,7 +41,7 @@ router.post("/edit/Post/:_id", (req, res) => {
       validate = true
     }
   }
-  if (validate == true){
+  if (validate == true || req.body.tags.length === 0){
     const { _id } = req.params;
     Post.findByIdAndUpdate(_id, req.body)
       .then(() => {
