@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <title>Posts</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Posts</span>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <form onsubmit="return onSubmit()" name="myForm">
+        <input
+          type="text"
+          name="title"
+          class="form-control mb-2"
+          placeholder="Enter title"
+        />
+        <input
+          type="text"
+          name="content"
+          class="form-control mb-2"
+          placeholder="Enter content"
+        />
+        <div class="d-flex">
+          <input
+            type="text"
+            name="tags"
+            class="form-control mb-2 w-25"
+            placeholder="Enter tags"
+          />
+          <input class="btn btn-md btn-primary mx-2" type="button" id="button1" value="Add Tag" onclick="add_element_to_array();"></input>
+        </div>
+        <input type="submit" value="Add Post" class="btn btn-md btn-primary" />
+      </form>
+      
+
+
+      <div class="list-group my-5">
+        <% post.forEach(posts => { %>
+        <div class="list-group-item list-group-item-action" aria-current="true">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><%= posts.title %></h5>
+            
+            <small>
+              <a
+                href="/<%= posts._id %>"
+                class="btn btn-warning btn-sm"
+                >
+                Edit
+              </a>
+              <a
+                href="/delete/Post/<%= posts._id %>"
+                class="btn btn-danger btn-sm"
+                >
+                Delete
+              </a>
+            </small>
+          </div>
+          <p class="mb-1"><%= posts.content %></p>
+          <% posts.tags.forEach(tag => { %>
+            <span class="badge alert-success"><%= tag %></span>
+          <% }) %>
+          <small class="d-block">Published at: <%= posts.publish_date.toISOString().slice(0, 10) %></small>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    >
+  </script>
+  <script>
+    var x = 0;
+    var array = Array();  
+
+    function add_element_to_array()
+    {
+      array[x] = document.forms["myForm"]["tags"].value;
+      alert("Element: " + array[x] + " Added at index " + x);
+      x++;
+      document.forms["myForm"]["tags"].value = "";
+    }
+
+     function onSubmit(){
+      var ftitle = document.forms["myForm"]["title"].value;
+      var fcontent = document.forms["myForm"]["content"].value;
+      const data = {
+        title: ftitle,
+        content: fcontent,
+        tags: array
+      }
+      fetch("/add/Post" , {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+         Accept: 'application/json',
+         'Content-Type': 'application/json'
+        },
+      }).then(() => document.location.reload(true)).catch((err) => console.log(err))
+      return false;
+    }
+  </script>
+  </body>
+</html>
